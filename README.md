@@ -28,9 +28,66 @@ The resulting raw disk image can be flashed onto an SD card.
 
 The image can be booted via (user: root, password: root):
 
-```
+```shell
 ./start-qemu.sh amd64
 ```
+
+## Integrate a new isar feature
+
+To demonstrate how the integrate of single features in the base demo layer works, we choose to add "SWUpdate".
+
+Following steps are required:
+
+1. Add another layer to this demo, e.g. cip-core: <https://gitlab.com/cip-project/cip-core/isar-cip-core>
+   - Update kas configuration: edit `kas.yaml` and add a new layer:
+
+      ```yaml
+        isar-cip-core:
+          url: https://gitlab.com/cip-project/cip-core/isar-cip-core.git
+          branch: master
+      ```
+
+   - Build the new layer:
+
+      ```shell
+      ./kas-container build ./kas.yaml:kas/machine/qemuamd64.yaml
+      ```
+
+2. You need to use `efibootguard` with `SWUpdate` in your isar image because efibootguard manages EFI boot entries and ensures safe, atomic updates of the bootloader and system images.
+   - To exchange the bootload from `grub` to `efibootguard` (part of cip-core), add following change into the file `meta-demo/recipes-core/images/demo-image_1.0.bb`:
+
+      ```text
+      # Change bootloader from grub to efibootguard
+      inherit efitbootguard
+      ```
+
+   - Call kas container build command again:
+
+      ```shell
+      ./kas-container build ./kas.yaml:kas/machine/qemuamd64.yaml
+      ```
+
+   - Change image description by using the proper `wks` file from `isar-cip-core` layer:
+
+      ```shell
+      cp isar-cip-core/wic/qemu-amd64-efibootguard.wks.in meta-demo/wic/qemu-amd64-efibootguard.wks.in
+      ```
+
+   - Add WKF_FILE variable in  the demo image description file `demo-image_1.0.bb`:
+
+      ```text
+      WKS_FILE = "${MACHINE}-efibootguard.wks.in" 
+      ```
+
+    > Make sure the machine name matched the kas machine name `kas/machine/qemuamd64.yaml`
+
+   - Call kas container build command again:
+
+      ```shell
+        ./kas-container build ./kas.yaml:kas/machine/qemuamd64.yaml
+        # FIXME
+        ERROR: /work/build/../../repo/meta-demo/recipes-core/images/demo-image_1.0.bb: WKS_FILE 'qemuamd64-efibootguard.wks.in' not found
+        ```
 
 ## License
 

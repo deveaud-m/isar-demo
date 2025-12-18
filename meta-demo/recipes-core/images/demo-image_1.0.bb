@@ -3,6 +3,9 @@
 #
 # SPDX-License-Identifier: MIT
 
+# Change bootloader from grub to efibootguard
+inherit efibootguard
+
 require recipes-core/images/isar-image-base.bb
 
 ISAR_RELEASE_CMD = "git -C ${LAYERDIR_meta-demo} describe --tags --dirty --always --match 'v[0-9].[0-9]*'"
@@ -14,3 +17,5 @@ IMAGE_PREINSTALL += "vim"
 USERS += "root"
 USER_root[flags] = "clear-text-password"
 USER_root[password] = "root"
+
+WKS_FILE = "${MACHINE}-efibootguard.wks.in" 
