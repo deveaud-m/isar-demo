@@ -1,0 +1,27 @@
+# This software is a part of isar demo.
+# Copyright (c) Siemens AG, 2025
+#
+# SPDX-License-Identifier: MIT
+#
+
+header:
+  version: 17
+  includes:
+   - kas/opt/swupdate.yaml
+
+local_conf_header:
+  partitioning-layout: |
+    # set A/B partitioning layout and efibootguard, by using isar-cip-core/wic/x86-uefi-efibootguard.wks.in
+    WKS_FILE = "x86-uefi-efibootguard.wks.in"
+  bootloader: |
+    # set efibootguard as the bootloader for SWUpdate
+    SWUPDATE_BOOTLOADER = "efibootguard"
+  image_options: |
+    # base config on isar-cip-core/recipes-core/images/efibootguard.inc
+    DEMO_IMAGE_OPTIONS:append = " recipes-core/images/efibootguard.inc"
+  initramfs: |
+    # include a hook for A/B rootfs in the initramfs
+    INITRAMFS_INSTALL:append = " initramfs-abrootfs-hook"
+  firmware-binaries: |
+    # add OVMF binaries, necessary for QEMU UEFI boot, by basing on isar-cip-core/recipes-core/images/deploy-ovmf.inc
+    DEMO_IMAGE_OPTIONS:append = " recipes-core/images/deploy-ovmf.inc"

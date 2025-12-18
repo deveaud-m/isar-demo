@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: MIT
 
 require recipes-core/images/isar-image-base.bb
+DEMO_IMAGE_OPTIONS ?= ""
+require ${DEMO_IMAGE_OPTIONS}
 
 ISAR_RELEASE_CMD = "git -C ${LAYERDIR_meta-demo} describe --tags --dirty --always --match 'v[0-9].[0-9]*'"
 

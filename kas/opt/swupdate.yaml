@@ -1,0 +1,41 @@
+# This software is a part of isar demo.
+# Copyright (c) Siemens AG, 2025
+#
+# SPDX-License-Identifier: MIT
+#
+# This kas file adds swupdate and generates a .swu
+# from the first wic partition
+
+header:
+  version: 17
+
+local_conf_header:
+  image-options: |
+    # base config on isar-cip-core/recipes-core/images/swupdate.inc
+    DEMO_IMAGE_OPTIONS:append = " recipes-core/images/swupdate.inc"
+    OVERRIDES .= ":swupdate"
+  swu-filetype: |
+    RO_ROOTFS_TYPE = "squashfs"
+    # swu file is based on root filesystem in squashfs format
+    IMAGE_TYPEDEP:wic += "${RO_ROOTFS_TYPE}"
+    # create a .swu file that can be used for updating
+    IMAGE_FSTYPES:append = " swu"
+    # input is already compressed
+    SWU_COMPRESSION_TYPE = ""
+  abrootfs: |
+    # include a hook for squashfs-based A/B rootfs in the initramfs
+    INITRAMFS_INSTALL:append = " initramfs-${RO_ROOTFS_TYPE}-hook"
+    # define UUIDs for the A/B rootfs partitions
+    ABROOTFS_PART_UUID_A = "fedcba98-7654-3210-cafe-5e0710000001"
+    ABROOTFS_PART_UUID_B = "fedcba98-7654-3210-cafe-5e0710000002"
+  preferred-providers: |
+    # specify preferred providers
+    PREFERRED_PROVIDER_swupdate-certificates-key = "swupdate-certificates-key-snakeoil"
+    PREFERRED_PROVIDER_swupdate-certificates = "swupdate-certificates-snakeoil"
+    PREFERRED_PROVIDER_swupdate-signer = "swupdate-signer-cms"
+  swu-config: |
+    # install isar-cip-core/recipes-core/swupdate-config
+    IMAGE_INSTALL:append = " swupdate-config"
+  watchdog-timeout: |
+    # set the watchdog timeout to 0 (disabled)
+    WDOG_TIMEOUT = "0"
