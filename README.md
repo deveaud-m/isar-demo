@@ -13,7 +13,7 @@ This is a **demonstration project** that illustrates how to use Isar to build cu
 
 ### Key Technologies
 
-- **[Isar](https://github.com/ilbers/isar/)**: A set of scripts for building software packages and repeatable generation of Debian-based root filesystems with customizations. Think of it as "Yocto for Debian" - it uses BitBake (the build tool from Yocto) but builds Debian packages instead of custom package formats.
+- **[Isar](https://github.com/ilbers/isar/)**: A build framework for creating software packages and repeatable generation of Debian-based root filesystems with customizations. Think of it as "Yocto for Debian" - it uses BitBake (the build tool from Yocto) but builds Debian packages instead of custom package formats.
 - **[kas](https://kas.readthedocs.io/)**: A setup tool for BitBake-based projects that simplifies repository and build configuration management.
 - **Debian Trixie**: The target Debian distribution version for the generated images.
 
@@ -31,20 +31,20 @@ This is a **demonstration project** that illustrates how to use Isar to build cu
 
 ```
 isar-demo/
-├── kas.yaml                    # Main build configuration (kas setup)
-├── kas/                        # Machine-specific configurations
+├── kas.yaml                       # Main build configuration (kas setup)
+├── kas/                           # Machine-specific configurations
 │   └── machine/
-│       ├── qemuamd64.yaml     # QEMU AMD64 target
+│       ├── qemuamd64.yaml         # QEMU AMD64 target
 │       └── rpi-arm64-v8-efi.yaml  # Raspberry Pi 4B target
-├── meta-demo/                  # Custom Isar layer
-│   ├── recipes-app/           # Custom application recipes
-│   │   └── custom-app/        # Example C application
-│   └── recipes-core/          # Core system recipes
-│       ├── images/            # Image definitions
+├── meta-demo/                     # Custom Isar layer
+│   ├── recipes-app/               # Custom application recipes
+│   │   └── custom-app/            # Example C application
+│   └── recipes-core/              # Core system recipes
+│       ├── images/                # Image definitions
 │       │   └── demo-image_1.0.bb  # Main image recipe
-│       └── customization/     # System customization hooks
-├── kas-container              # Containerized build wrapper script
-└── start-qemu.sh             # Script to boot QEMU images
+│       └── customization/         # System customization hooks
+├── kas-container                  # Containerized build wrapper script
+└── start-qemu.sh                  # Script to boot QEMU images
 ```
 
 **Important Note:** This project is intended solely as a demo and learning resource. It should not be used as a basis for product development without proper adaptation and hardening.
@@ -80,7 +80,7 @@ This creates a disk image with EFI boot support for ARM64 architecture. The resu
 ```bash
 sudo dd if=build/tmp/deploy/images/rpi-arm64-v8-efi/demo-image-debian-trixie-rpi-arm64-v8-efi.wic of=/dev/sdX bs=4M status=progress
 ```
-(Replace `/dev/sdX` with your SD card device)
+**Note:** Replace `/dev/sdX` with your SD card device. The exact image filename may vary - check your `build/tmp/deploy/images/rpi-arm64-v8-efi/` directory for the actual `.wic` file generated.
 
 ### For QEMU AMD64
 
